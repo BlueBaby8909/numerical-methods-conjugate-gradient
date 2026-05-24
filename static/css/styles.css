@@ -569,12 +569,16 @@ select:focus {
 }
 
 .example-button-group {
-    width: 100%;
+    display: flex;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-start;
+    min-width: 0;
 }
 
 .calculator .example-button {
-    width: 100%;
-    min-width: 0;
+    min-width: 112px;
 }
 
 .input-mode-switch {
@@ -1526,8 +1530,14 @@ dd {
 
     .example-button-group {
         display: grid;
+        width: 100%;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 8px;
+    }
+
+    .calculator .example-button {
+        width: 100%;
+        min-width: 0;
     }
 
     .visualization-tabs {
