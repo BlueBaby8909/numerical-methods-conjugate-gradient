@@ -236,11 +236,13 @@ class ConjugateGradientTests(unittest.TestCase):
         html = response.data.decode()
         script = Path("static/js/conjugate_gradient.js").read_text()
         navigation_script = Path("static/js/site_navigation.js").read_text()
+        motion_script = Path("static/js/site_motion.js").read_text()
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("js/conjugate_gradient.js", html)
         self.assertIn("js/site_navigation.js", html)
-        self.assertNotIn("gsap", html.lower())
+        self.assertIn("gsap.min.js", html)
+        self.assertIn("js/site_motion.js", html)
         self.assertIn('action="/conjugate-gradient#calculation-feedback"', html)
         self.assertIn("function refreshSectionLayout()", script)
         self.assertIn('window.dispatchEvent(new Event("resize"))', script)
@@ -249,6 +251,8 @@ class ConjugateGradientTests(unittest.TestCase):
         self.assertIn('behavior: "auto"', navigation_script)
         self.assertIn("preventScroll: true", script)
         self.assertIn("waitForStableLayout", navigation_script)
+        self.assertIn("prefers-reduced-motion: reduce", motion_script)
+        self.assertIn("IntersectionObserver", motion_script)
 
     def test_calculator_submit_uses_fetch_without_full_reload(self):
         script = Path("static/js/conjugate_gradient.js").read_text()
