@@ -1,0 +1,308 @@
+{% if error %}
+<div class="result error">
+    <h3>Input needs attention</h3>
+    <p>{{ error }}</p>
+</div>
+{% elif result %}
+<div class="result-dashboard">
+    {% set has_quadratic_visualization = result.get("quadratic_visualization") %}
+    <div class="summary-grid">
+        <div class="summary-card primary">
+            <span>Approximate solution</span>
+            <pre>{{ result.display_solution }}</pre>
+        </div>
+        <div class="summary-card">
+            <span>Iterations</span>
+            <strong>{{ result.iterations }}</strong>
+        </div>
+        <div class="summary-card">
+            <span>Final residual norm</span>
+            <strong>{{ result.display_final_residual_norm }}</strong>
+        </div>
+        <div class="summary-card">
+            <span>Status</span>
+            <strong>{% if result.converged %}Converged{% else %}Stopped{% endif %}</strong>
+        </div>
+    </div>
+
+    <div class="result success">
+        <h3>Convergence message</h3>
+        <p>{{ result.message }}</p>
+    </div>
+
+    <div class="visualization-panel">
+        <div class="visualization-header">
+            <div>
+                <h3>Visualization Dashboard</h3>
+                <p>
+                    Review the method as a minimization path, residual
+                    error graph, and iteration table.
+                </p>
+            </div>
+        </div>
+
+        <div class="visualization-tabs" role="tablist" aria-label="Result visualizations">
+            <button
+                type="button"
+                class="visualization-tab"
+                id="tab-contour"
+                role="tab"
+                aria-controls="panel-contour"
+                aria-selected="{% if has_quadratic_visualization %}true{% else %}false{% endif %}"
+                data-visualization-tab="contour"
+            >
+                2D Contour
+            </button>
+            <button
+                type="button"
+                class="visualization-tab"
+                id="tab-surface"
+                role="tab"
+                aria-controls="panel-surface"
+                aria-selected="false"
+                data-visualization-tab="surface"
+            >
+                3D Surface
+            </button>
+            <button
+                type="button"
+                class="visualization-tab"
+                id="tab-residual"
+                role="tab"
+                aria-controls="panel-residual"
+                aria-selected="{% if has_quadratic_visualization %}false{% else %}true{% endif %}"
+                data-visualization-tab="residual"
+            >
+                Residual Graph
+            </button>
+            <button
+                type="button"
+                class="visualization-tab"
+                id="tab-table"
+                role="tab"
+                aria-controls="panel-table"
+                aria-selected="false"
+                data-visualization-tab="table"
+            >
+                Iteration Table
+            </button>
+        </div>
+        <p class="visualization-tabs-scroll-hint" aria-hidden="true">Swipe tabs</p>
+
+        <div
+            class="visualization-tab-panel"
+            id="panel-contour"
+            role="tabpanel"
+            aria-labelledby="tab-contour"
+            {% if not has_quadratic_visualization %}hidden{% endif %}
+        >
+            <h3>2D Contour Visualization</h3>
+            {% if has_quadratic_visualization %}
+            <p>
+                Contour lines show the quadratic objective, while the
+                connected points show the real Conjugate Gradient path.
+            </p>
+            <div class="plotly-chart" id="contourPlot"></div>
+            {% else %}
+            <p class="visualization-unavailable">
+                2D and 3D visualizations are only available for 2x2 systems.
+            </p>
+            {% endif %}
+        </div>
+
+        <div
+            class="visualization-tab-panel"
+            id="panel-surface"
+            role="tabpanel"
+            aria-labelledby="tab-surface"
+            hidden
+        >
+            <h3>3D Surface Visualization</h3>
+            {% if has_quadratic_visualization %}
+            <p>
+                The bowl-shaped surface represents the same quadratic
+                objective. The orange path sits on the surface, the pale
+                floor path shows the same movement from above, and the
+                vertical guide lines connect each iteration to its height
+                \(f(x)\).
+            </p>
+            <div class="surface-reading-guide" aria-label="How to read the 3D surface">
+                <span><strong>Surface</strong> objective value \(f(x)\)</span>
+                <span><strong>Orange line</strong> real CG iterations</span>
+                <span><strong>Floor line</strong> top-down path projection</span>
+                <span><strong>Diamond</strong> final solution</span>
+            </div>
+            <div class="plotly-chart" id="surfacePlot"></div>
+            {% else %}
+            <p class="visualization-unavailable">
+                2D and 3D visualizations are only available for 2x2 systems.
+            </p>
+            {% endif %}
+        </div>
+
+        <div
+            class="visualization-tab-panel"
+            id="panel-residual"
+            role="tabpanel"
+            aria-labelledby="tab-residual"
+            {% if has_quadratic_visualization %}hidden{% endif %}
+        >
+            <h3>Residual Error Graph</h3>
+            <p>
+                The graph shows how the residual norm changes from the
+                initial guess through each iteration.
+            </p>
+            <canvas id="residualChart" height="120"></canvas>
+            <p class="chart-fallback" id="chartFallback">
+                Chart unavailable. The iteration table still contains the
+                convergence values.
+            </p>
+        </div>
+
+        <div
+            class="visualization-tab-panel"
+            id="panel-table"
+            role="tabpanel"
+            aria-labelledby="tab-table"
+            hidden
+        >
+            <div class="table-panel-header">
+                <div>
+                    <h3>Iteration Table</h3>
+                    <p>
+                        Export the currently displayed iteration history
+                        with the result summary metadata.
+                    </p>
+                </div>
+                <div class="table-export-actions" aria-label="Export iteration table">
+                    <button
+                        type="button"
+                        class="secondary-button export-button"
+                        data-export-format="csv"
+                        {% if not result.steps %}disabled{% endif %}
+                    >
+                        Export CSV
+                    </button>
+                    <button
+                        type="button"
+                        class="secondary-button export-button"
+                        data-export-format="pdf"
+                        {% if not result.steps %}disabled{% endif %}
+                    >
+                        Export PDF
+                    </button>
+                </div>
+            </div>
+
+            <p class="table-export-status" id="tableExportStatus" aria-live="polite">
+                {% if result.steps %}
+                Ready to export {{ result.steps|length }} iteration{% if result.steps|length != 1 %}s{% endif %}.
+                {% else %}
+                No iterations were needed because the initial guess already satisfies the tolerance.
+                {% endif %}
+            </p>
+
+            {% if result.steps %}
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Iteration</th>
+                            <th>x_k</th>
+                            <th>Alpha</th>
+                            <th>Beta</th>
+                            <th>Residual vector r_k</th>
+                            <th>Residual norm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for step in result.steps %}
+                        <tr>
+                            <td>{{ step.iteration }}</td>
+                            <td><code>{{ step.display_x }}</code></td>
+                            <td>{{ step.display_alpha }}</td>
+                            <td>
+                                {% if step.beta is not none %}
+                                {{ step.display_beta }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <td><code>{{ step.display_residual }}</code></td>
+                            <td>{{ step.display_residual_norm }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="table-empty-state">
+                <h4>No iteration rows to export</h4>
+                <p>
+                    The solver converged before taking an iteration, so
+                    there is no iteration table data to download.
+                </p>
+            </div>
+            {% endif %}
+
+            <div class="steps-panel">
+                <h3>Step-by-step solution</h3>
+                {% if result.steps %}
+                <div class="step-grid">
+                    {% for step in result.steps %}
+                    <article class="step-card">
+                        <p class="eyebrow">Iteration {{ step.iteration }}</p>
+                        <dl>
+                            <div>
+                                <dt>Direction p</dt>
+                                <dd>{{ step.display_direction }}</dd>
+                            </div>
+                            <div>
+                                <dt>A p</dt>
+                                <dd>{{ step.display_ap }}</dd>
+                            </div>
+                            <div>
+                                <dt>Alpha</dt>
+                                <dd>{{ step.display_alpha }}</dd>
+                            </div>
+                            <div>
+                                <dt>Updated x</dt>
+                                <dd>{{ step.display_x }}</dd>
+                            </div>
+                            <div>
+                                <dt>Residual</dt>
+                                <dd>{{ step.display_residual }}</dd>
+                            </div>
+                            <div>
+                                <dt>Residual norm</dt>
+                                <dd>{{ step.display_residual_norm }}</dd>
+                            </div>
+                            <div>
+                                <dt>Beta</dt>
+                                <dd>
+                                    {% if step.beta is not none %}
+                                    {{ step.display_beta }}
+                                    {% else %}
+                                    Not needed after convergence
+                                    {% endif %}
+                                </dd>
+                            </div>
+                        </dl>
+                    </article>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="table-empty-state compact">
+                    The initial residual norm was already within the
+                    selected tolerance, so no iterative update was needed.
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="result">
+    Enter values above, then press Calculate Solution.
+</div>
+{% endif %}

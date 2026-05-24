@@ -1,0 +1,505 @@
+<section class="section formula-section" id="formula" data-collapsible-section data-section-name="Formula">
+    <div class="section-heading">
+        <h2>Formula</h2>
+        <button
+            type="button"
+            class="section-toggle"
+            aria-expanded="true"
+            aria-controls="formula-content"
+            aria-label="Minimize Formula"
+            title="Minimize Formula"
+        >
+            <span class="section-toggle-icon" aria-hidden="true"></span>
+        </button>
+    </div>
+
+    <div class="collapsible-content" id="formula-content">
+    <p>
+        Given a matrix \(A\), vector \(b\), and initial guess \(x_0\), the
+        method begins with:
+    </p>
+    <div class="math-block">
+        \[
+        r_0 = b - Ax_0
+        \]
+
+        \[
+        p_0 = r_0
+        \]
+
+        \[
+        \alpha_k = \frac{r_k^T r_k}{p_k^T A p_k}
+        \]
+
+        \[
+        x_{k+1} = x_k + \alpha_k p_k
+        \]
+
+        \[
+        r_{k+1} = r_k - \alpha_k A p_k
+        \]
+
+        \[
+        \beta_k = \frac{r_{k+1}^T r_{k+1}}{r_k^T r_k}
+        \]
+
+        \[
+        p_{k+1} = r_{k+1} + \beta_k p_k
+        \]
+    </div>
+    </div>
+</section>
+
+<section class="section" id="examples" data-collapsible-section data-section-name="Worked Example 1">
+    <div class="section-heading">
+        <h2>Worked Example 1</h2>
+        <button
+            type="button"
+            class="section-toggle"
+            aria-expanded="true"
+            aria-controls="example-1-content"
+            aria-label="Minimize Worked Example 1"
+            title="Minimize Worked Example 1"
+        >
+            <span class="section-toggle-icon" aria-hidden="true"></span>
+        </button>
+    </div>
+
+    <div class="collapsible-content" id="example-1-content">
+    <p>
+        Solve the system \(Ax = b\), where:
+    </p>
+
+    <div class="math-block">
+        \[
+        A =
+        \begin{bmatrix}
+        4 & 1 \\
+        1 & 3
+        \end{bmatrix},
+        \quad
+        b =
+        \begin{bmatrix}
+        1 \\
+        2
+        \end{bmatrix},
+        \quad
+        x_0 =
+        \begin{bmatrix}
+        0 \\
+        0
+        \end{bmatrix}
+        \]
+    </div>
+
+    <h3>Step 1: Compute the Initial Residual</h3>
+    <div class="math-block">
+        \[
+        r_0 = b - Ax_0
+        \]
+
+        \[
+        Ax_0 =
+        \begin{bmatrix}
+        4 & 1 \\
+        1 & 3
+        \end{bmatrix}
+        \begin{bmatrix}
+        0 \\
+        0
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+        0 \\
+        0
+        \end{bmatrix}
+        \]
+
+        \[
+        r_0 =
+        \begin{bmatrix}
+        1 \\
+        2
+        \end{bmatrix}
+        -
+        \begin{bmatrix}
+        0 \\
+        0
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+        1 \\
+        2
+        \end{bmatrix}
+        \]
+
+        \[
+        p_0 = r_0 =
+        \begin{bmatrix}
+        1 \\
+        2
+        \end{bmatrix}
+        \]
+    </div>
+
+    <h3>Step 2: First Iteration</h3>
+    <div class="math-block">
+        \[
+        Ap_0 =
+        \begin{bmatrix}
+        4 & 1 \\
+        1 & 3
+        \end{bmatrix}
+        \begin{bmatrix}
+        1 \\
+        2
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+        6 \\
+        7
+        \end{bmatrix}
+        \]
+
+        \[
+        r_0^T r_0 = 1^2 + 2^2 = 5
+        \]
+
+        \[
+        p_0^T Ap_0 = (1)(6) + (2)(7) = 20
+        \]
+
+        \[
+        \alpha_0 = \frac{5}{20} = 0.25
+        \]
+
+        \[
+        x_1 = x_0 + \alpha_0 p_0
+        =
+        \begin{bmatrix}
+        0 \\
+        0
+        \end{bmatrix}
+        +
+        0.25
+        \begin{bmatrix}
+        1 \\
+        2
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+        0.25 \\
+        0.5
+        \end{bmatrix}
+        \]
+
+        \[
+        r_1 = r_0 - \alpha_0 Ap_0
+        =
+        \begin{bmatrix}
+        1 \\
+        2
+        \end{bmatrix}
+        -
+        0.25
+        \begin{bmatrix}
+        6 \\
+        7
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+        -0.5 \\
+        0.25
+        \end{bmatrix}
+        \]
+    </div>
+
+    <h3>Step 3: Compute the Next Direction</h3>
+    <div class="math-block">
+        \[
+        r_1^T r_1 = (-0.5)^2 + (0.25)^2 = 0.3125
+        \]
+
+        \[
+        \beta_0 = \frac{r_1^T r_1}{r_0^T r_0}
+        =
+        \frac{0.3125}{5}
+        =
+        0.0625
+        \]
+
+        \[
+        p_1 = r_1 + \beta_0 p_0
+        =
+        \begin{bmatrix}
+        -0.5 \\
+        0.25
+        \end{bmatrix}
+        +
+        0.0625
+        \begin{bmatrix}
+        1 \\
+        2
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+        -0.4375 \\
+        0.375
+        \end{bmatrix}
+        \]
+    </div>
+
+    <h3>Step 4: Second Iteration</h3>
+    <div class="math-block">
+        \[
+        Ap_1 =
+        \begin{bmatrix}
+        4 & 1 \\
+        1 & 3
+        \end{bmatrix}
+        \begin{bmatrix}
+        -0.4375 \\
+        0.375
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+        -1.375 \\
+        0.6875
+        \end{bmatrix}
+        \]
+
+        \[
+        p_1^T Ap_1 = (-0.4375)(-1.375) + (0.375)(0.6875) = 0.859375
+        \]
+
+        \[
+        \alpha_1 = \frac{0.3125}{0.859375} = 0.363636
+        \]
+
+        \[
+        x_2 = x_1 + \alpha_1 p_1
+        =
+        \begin{bmatrix}
+        0.25 \\
+        0.5
+        \end{bmatrix}
+        +
+        0.363636
+        \begin{bmatrix}
+        -0.4375 \\
+        0.375
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+        0.090909 \\
+        0.636364
+        \end{bmatrix}
+        \]
+
+        \[
+        r_2 = r_1 - \alpha_1 Ap_1
+        =
+        \begin{bmatrix}
+        0 \\
+        0
+        \end{bmatrix}
+        \]
+    </div>
+
+    <p>
+        Since the residual is now zero, the method has converged. Therefore,
+        the solution is approximately:
+    </p>
+
+    <div class="math-block">
+        \[
+        x =
+        \begin{bmatrix}
+        0.090909 \\
+        0.636364
+        \end{bmatrix}
+        \]
+    </div>
+    </div>
+</section>
+
+<section class="section" id="example-2" data-collapsible-section data-section-name="Worked Example 2">
+    <div class="section-heading">
+        <h2>Worked Example 2</h2>
+        <button
+            type="button"
+            class="section-toggle"
+            aria-expanded="true"
+            aria-controls="example-2-content"
+            aria-label="Minimize Worked Example 2"
+            title="Minimize Worked Example 2"
+        >
+            <span class="section-toggle-icon" aria-hidden="true"></span>
+        </button>
+    </div>
+
+    <div class="collapsible-content" id="example-2-content">
+    <p>
+        Solve the system \(Ax = b\), where:
+    </p>
+
+    <div class="math-block">
+        \[
+        A =
+        \begin{bmatrix}
+        2 & 0 \\
+        0 & 2
+        \end{bmatrix},
+        \quad
+        b =
+        \begin{bmatrix}
+        2 \\
+        4
+        \end{bmatrix},
+        \quad
+        x_0 =
+        \begin{bmatrix}
+        0 \\
+        0
+        \end{bmatrix}
+        \]
+    </div>
+
+    <h3>Step 1: Compute the Initial Residual</h3>
+    <div class="math-block">
+        \[
+        r_0 = b - Ax_0
+        \]
+
+        \[
+        Ax_0 =
+        \begin{bmatrix}
+        2 & 0 \\
+        0 & 2
+        \end{bmatrix}
+        \begin{bmatrix}
+        0 \\
+        0
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+        0 \\
+        0
+        \end{bmatrix}
+        \]
+
+        \[
+        r_0 =
+        \begin{bmatrix}
+        2 \\
+        4
+        \end{bmatrix}
+        -
+        \begin{bmatrix}
+        0 \\
+        0
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+        2 \\
+        4
+        \end{bmatrix}
+        \]
+
+        \[
+        p_0 = r_0 =
+        \begin{bmatrix}
+        2 \\
+        4
+        \end{bmatrix}
+        \]
+    </div>
+
+    <h3>Step 2: First Iteration</h3>
+    <div class="math-block">
+        \[
+        Ap_0 =
+        \begin{bmatrix}
+        2 & 0 \\
+        0 & 2
+        \end{bmatrix}
+        \begin{bmatrix}
+        2 \\
+        4
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+        4 \\
+        8
+        \end{bmatrix}
+        \]
+
+        \[
+        r_0^T r_0 = 2^2 + 4^2 = 20
+        \]
+
+        \[
+        p_0^T Ap_0 = (2)(4) + (4)(8) = 40
+        \]
+
+        \[
+        \alpha_0 = \frac{20}{40} = 0.5
+        \]
+
+        \[
+        x_1 = x_0 + \alpha_0 p_0
+        =
+        \begin{bmatrix}
+        0 \\
+        0
+        \end{bmatrix}
+        +
+        0.5
+        \begin{bmatrix}
+        2 \\
+        4
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+        1 \\
+        2
+        \end{bmatrix}
+        \]
+
+        \[
+        r_1 = r_0 - \alpha_0 Ap_0
+        =
+        \begin{bmatrix}
+        2 \\
+        4
+        \end{bmatrix}
+        -
+        0.5
+        \begin{bmatrix}
+        4 \\
+        8
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+        0 \\
+        0
+        \end{bmatrix}
+        \]
+    </div>
+
+    <p>
+        Since the residual is zero after the first iteration, the method has
+        converged. Therefore, the solution is:
+    </p>
+
+    <div class="math-block">
+        \[
+        x =
+        \begin{bmatrix}
+        1 \\
+        2
+        \end{bmatrix}
+        \]
+    </div>
+    </div>
+</section>

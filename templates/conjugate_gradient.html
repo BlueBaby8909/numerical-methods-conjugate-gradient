@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Conjugate Gradient | Numerical Methods Calculator{% endblock %}
+
+{% block content %}
+<section class="section method-intro" id="discussion" data-collapsible-section data-section-name="Discussion">
+    <div class="section-heading">
+        <p class="eyebrow">Selected Method</p>
+        <button
+            type="button"
+            class="section-toggle"
+            aria-expanded="true"
+            aria-controls="discussion-content"
+            aria-label="Minimize Discussion"
+            title="Minimize Discussion"
+        >
+            <span class="section-toggle-icon" aria-hidden="true"></span>
+        </button>
+    </div>
+
+    <div class="collapsible-content method-intro-content" id="discussion-content">
+    <div class="method-copy">
+        <h1>Conjugate Gradient Method</h1>
+        <p>
+            The Conjugate Gradient Method is an iterative method used to solve a
+            system of linear equations in the form \(Ax = b\). It starts with an
+            initial guess and improves it step by step using search directions
+            that are conjugate with respect to the matrix \(A\).
+        </p>
+    </div>
+
+    <div class="method-facts" aria-label="Method requirements">
+        <div>
+            <span>Matrix type</span>
+            <strong>Symmetric positive definite</strong>
+        </div>
+        <div>
+            <span>Stop condition</span>
+            <strong>Residual norm below tolerance</strong>
+        </div>
+        <div>
+            <span>Input forms</span>
+            <strong>Matrix grid or linear equations</strong>
+        </div>
+    </div>
+    </div>
+</section>
+
+<section class="section calculator" id="calculator">
+    <div class="calculator-header">
+        <div>
+            <p class="eyebrow">Interactive Calculator</p>
+            <h2>Calculate an Approximate Solution</h2>
+        </div>
+        <p class="calculator-note">
+            This calculator assumes that \(A\) is symmetric positive definite.
+        </p>
+    </div>
+
+    {% include "partials/conjugate_gradient_form.html" %}
+
+    <div
+        id="calculation-feedback"
+        class="calculation-feedback"
+        {% if result or error %}data-scroll-after-submit="true"{% endif %}
+        {% if result or error %}tabindex="-1"{% endif %}
+    >
+    {% include "partials/conjugate_gradient_feedback.html" %}
+    </div>
+</section>
+
+{% include "partials/conjugate_gradient_learning_sections.html" %}
+
+{% endblock %}
+
+{% block scripts %}
+{% include "partials/conjugate_gradient_scripts.html" %}
+{% endblock %}
+

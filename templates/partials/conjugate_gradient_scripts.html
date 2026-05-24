@@ -1,0 +1,50 @@
+<script src="{{ url_for('static', filename='js/conjugate_gradient.js') }}"></script>
+
+{% if result %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% if result.get("quadratic_visualization") %}
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+{% endif %}
+<script>
+    window.cgResultData = {
+        residualLabels: {{ result.plot_labels | tojson }},
+        residualValues: {{ result.residual_norms | tojson }},
+        quadraticVisualization: {% if result.get("quadratic_visualization") %}{{ result.quadratic_visualization | tojson }}{% else %}null{% endif %},
+        tableExport: {
+            metadata: {
+                methodName: "Conjugate Gradient Method",
+                generatedAt: new Date().toISOString(),
+                status: {% if result.converged %}"Converged"{% else %}"Stopped"{% endif %},
+                iterations: {{ result.iterations | tojson }},
+                finalResidualNorm: {{ result.display_final_residual_norm | tojson }},
+                approximateSolution: {{ result.display_solution | tojson }},
+                tolerance: {{ (tolerance_text or "0.000001") | tojson }},
+                maxIterations: {{ (max_iterations_text or "100") | tojson }}
+            },
+            headers: [
+                "Iteration",
+                "x_k",
+                "Alpha",
+                "Beta",
+                "Residual vector r_k",
+                "Residual norm"
+            ],
+            rows: [
+                {% for step in result.steps %}
+                {
+                    iteration: {{ step.iteration | tojson }},
+                    x: {{ step.display_x | tojson }},
+                    alpha: {{ step.display_alpha | tojson }},
+                    beta: {% if step.beta is not none %}{{ step.display_beta | tojson }}{% else %}"-"{% endif %},
+                    residual: {{ step.display_residual | tojson }},
+                    residualNorm: {{ step.display_residual_norm | tojson }}
+                }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ],
+            emptyMessage: "No iterations were needed because the initial guess already satisfies the tolerance."
+        }
+    };
+</script>
+<script src="{{ url_for('static', filename='js/table_exports.js') }}"></script>
+<script src="{{ url_for('static', filename='js/result_visualizations.js') }}"></script>
+{% endif %}

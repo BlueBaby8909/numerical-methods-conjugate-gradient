@@ -1,0 +1,134 @@
+<form method="post" action="{{ url_for('conjugate_gradient') }}#calculation-feedback">
+    <div class="input-mode-switch" role="group" aria-label="Input mode">
+        <label>
+            <input type="radio" name="input_mode" value="grid" {% if input_mode != "equations" %}checked{% endif %}>
+            Matrix grid
+        </label>
+        <label>
+            <input type="radio" name="input_mode" value="equations" {% if input_mode == "equations" %}checked{% endif %}>
+            Linear equations
+        </label>
+    </div>
+
+    <div class="input-panel" data-input-panel="grid">
+        <div class="calculator-tools">
+            <div class="form-field">
+                <label for="matrix_size">Matrix size</label>
+                <select id="matrix_size" name="matrix_size">
+                    {% for size in [2, 3, 4, 5] %}
+                    <option value="{{ size }}" {% if matrix_size|string == size|string %}selected{% endif %}>{{ size }} x {{ size }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="example-button-group" aria-label="Load matrix grid example">
+                <button type="button" class="secondary-button example-button" data-example-size="2">
+                    Load 2x2
+                </button>
+                <button type="button" class="secondary-button example-button" data-example-size="3">
+                    Load 3x3
+                </button>
+                <button type="button" class="secondary-button example-button" data-example-size="4">
+                    Load 4x4
+                </button>
+                <button type="button" class="secondary-button example-button" data-example-size="5">
+                    Load 5x5
+                </button>
+            </div>
+        </div>
+
+        <p>
+            Fill in matrix \(A\), vector \(b\), and initial guess \(x_0\)
+            row by row. The grid supports sizes from 2 x 2 to 5 x 5.
+        </p>
+
+        <div class="matrix-equation-shell" id="matrixGrid">
+            <div class="matrix-equation">
+                <div class="equation-term">
+                    <span class="term-label">A</span>
+                    <div class="bracket-box matrix-bracket">
+                        <div class="matrix-cells" id="matrixBody"></div>
+                    </div>
+                </div>
+
+                <span class="equation-operator">&middot;</span>
+
+                <div class="equation-term">
+                    <span class="term-label">x</span>
+                    <div class="bracket-box vector-bracket">
+                        <div class="vector-cells" id="unknownVector"></div>
+                    </div>
+                </div>
+
+                <span class="equation-operator">=</span>
+
+                <div class="equation-term">
+                    <span class="term-label">b</span>
+                    <div class="bracket-box vector-bracket">
+                        <div class="vector-cells" id="targetVector"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="initial-guess-equation">
+                <span class="term-label">Initial guess \(x_0\)</span>
+                <div class="bracket-box vector-bracket">
+                    <div class="vector-cells" id="initialGuessVector"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="input-panel" data-input-panel="equations">
+        <div class="calculator-tools">
+            <button type="button" class="secondary-button" id="loadEquationExample">
+                Load equation example
+            </button>
+        </div>
+
+        <p>
+            Enter one linear equation per line. Supported variables are
+            \(x\), \(y\), \(z\), \(w\), and \(v\). Nonlinear terms such as
+            \(x^2\), \(xy\), and parentheses are not supported.
+        </p>
+
+        <div class="form-field form-field-wide">
+            <label for="equations">Linear equations</label>
+            <textarea id="equations" name="equations" rows="5" placeholder="Example:&#10;4x + y = 1&#10;x + 3y = 2">{{ equations_text or "" }}</textarea>
+        </div>
+
+        <div class="form-field form-field-wide">
+            <label for="initial_guess">Initial guess x0</label>
+            <input id="initial_guess" name="initial_guess" type="text" value="{{ initial_guess_text or '' }}" placeholder="Example: 0 0">
+        </div>
+    </div>
+
+    <div class="form-field">
+        <label for="tolerance">Tolerance</label>
+        <input id="tolerance" name="tolerance" type="text" value="{{ tolerance_text or '0.000001' }}" placeholder="Example: 0.000001">
+    </div>
+
+    <div class="form-field">
+        <label for="max_iterations">Maximum iterations</label>
+        <input id="max_iterations" name="max_iterations" type="text" value="{{ max_iterations_text or '100' }}" placeholder="Example: 100">
+    </div>
+
+    <div id="storedGridValues" hidden>
+        {% for name, value in matrix_values.items() %}
+        <input type="hidden" data-grid-value data-name="{{ name }}" value="{{ value }}">
+        {% endfor %}
+        {% for name, value in vector_values.items() %}
+        <input type="hidden" data-grid-value data-name="{{ name }}" value="{{ value }}">
+        {% endfor %}
+        {% for name, value in x0_values.items() %}
+        <input type="hidden" data-grid-value data-name="{{ name }}" value="{{ value }}">
+        {% endfor %}
+    </div>
+
+    <div class="form-actions">
+        <button type="submit">Calculate Solution</button>
+        <button type="button" class="secondary-button" id="clearCalculator">
+            Clear
+        </button>
+    </div>
+</form>

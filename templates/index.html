@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Home | Numerical Methods Calculator{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-copy">
+        <p class="eyebrow">PIT Finals 2026</p>
+        <h1>Numerical Methods Online Calculator</h1>
+        <p>
+            Explore the Conjugate Gradient Method through a focused calculator,
+            worked examples, iteration history, and convergence plotting.
+        </p>
+        <div class="hero-actions">
+            <a class="button" href="/conjugate-gradient?section=calculator">Open Calculator</a>
+            <a class="button secondary-link" href="/conjugate-gradient">View Method</a>
+        </div>
+    </div>
+    <aside class="hero-panel" aria-label="Project summary">
+        <span>Method</span>
+        <strong>Conjugate Gradient</strong>
+        <span>System form</span>
+        <strong>\(Ax = b\)</strong>
+        <span>Calculator modes</span>
+        <strong>Matrix grid and equations</strong>
+    </aside>
+</section>
+{% endblock %}
