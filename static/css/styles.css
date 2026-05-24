@@ -568,6 +568,15 @@ select:focus {
     border-color: rgba(47, 111, 109, 0.44);
 }
 
+.example-button-group {
+    width: 100%;
+}
+
+.calculator .example-button {
+    width: 100%;
+    min-width: 0;
+}
+
 .input-mode-switch {
     display: inline-grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
